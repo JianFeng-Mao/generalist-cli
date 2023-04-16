@@ -1,6 +1,6 @@
 {
   "name": "@generalist/create-deer",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "description": "A generic scaffolding system",
   "bin": {
     "@generalist/create-deer": "./bin/index.js",
@@ -22,17 +22,17 @@
     "email": "mjf_work@outlook.com"
   },
   "keywords": [
-    "deer-cli",
-    "@z-deer",
+    "generalist-cli",
+    "@generalist",
+    "create-deer",
     "cli",
     "脚手架"
   ],
   "license": "MIT",
   "dependencies": {
-    "@generalist/utils": "workspace:*",
+    "@generalist/utils": "0.1.2",
     "commander": "10.0.0",
     "ejs": "3.1.9",
-    "file-type": "16.5.4",
     "inquirer": "8.2.4"
   }
 }

@@ -19,9 +19,6 @@ importers:
       ejs:
         specifier: 3.1.9
         version: 3.1.9
-      file-type:
-        specifier: 16.5.4
-        version: 16.5.4
       inquirer:
         specifier: 8.2.4
         version: 8.2.4
@@ -129,7 +126,14 @@ importers:
         specifier: 2.6.10
         version: 2.6.10
 
-  packages/utils: {}
+  packages/utils:
+    dependencies:
+      '@generalist/create-deer':
+        specifier: workspace:*
+        version: link:../create-deer
+      file-type:
+        specifier: 16.5.4
+        version: 16.5.4
 
 packages:
 

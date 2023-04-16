@@ -1,8 +1,8 @@
 const fsPromise = require('fs/promises');
 const path = require('path');
-const { getFullTempltePath } = require('@l-deer/utils/template');
+const { getFullTempltePath } = require('@generalist/utils/template');
 const ejs = require('ejs');
-const { isImage } = require('@l-deer/utils/is');
+const { isImage } = require('@generalist/utils/is');
 
 class Generator {
   constructor(name, template, targetPath) {
@@ -71,7 +71,7 @@ class Generator {
 
     // 控制台所在目录
     const cwdUrl = process.cwd();
-    
+    console.log(cwdUrl);
     // 创建目录并返回创建的第一个目录路径（recursive: true）
     const targetPath = await this.mkDirectory(cwdUrl, this.name);
 

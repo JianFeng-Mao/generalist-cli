@@ -2,7 +2,7 @@ const path = require('path');
 const fsPromise = require('fs/promises');
 const inquirer = require('inquirer');
 const { overWriteQuestion, createAppTemplateQuestion } = require('./questions');
-const { isExistPath } = require('@l-deer/utils/is');
+const { isExistPath } = require('@generalist/utils/is');
 const Generator = require('./Generator');
 async function createApp({ name }, options) {
   // 当前命令行路径

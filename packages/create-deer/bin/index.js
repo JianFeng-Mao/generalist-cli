@@ -9,12 +9,14 @@ const program = new Command();
 
 program.version(`v${packageInfo.version}`).usage('<command> [option]');
 
+const init = () => { createAppPrompts(); }
+
 program
   .command('create [app-name]')
   .description('新建项目')
   .option('-f, --force', '如果当前目录下存在同名文件直接覆盖')
   .action((name, options) => {
-    createAppPrompts(name, options)
+    createAppPrompts(name, options);
   });
 
 // TODO
@@ -40,4 +42,12 @@ program
     console.log(options);
   });
 
-program.parse(process.argv);
+  // 判断用户输入的命令是否携带参数，无参数，process.argv默认带有两个参数 https://nodejs.cn/api/process.html#processargv
+  if(process.argv.length === 2) {
+    init();
+  } else {
+    // 解析命令行参数
+    program.parse();
+  }
+
+

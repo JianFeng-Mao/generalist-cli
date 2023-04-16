@@ -1,10 +1,10 @@
 const inquirer = require('inquirer');
-const { isEmpty } = require('@l-deer/utils/util');
+const { isEmpty } = require('@generalist/utils/util');
 
 const { createAppNameQuestion } = require('./questions');
 const { createApp } = require('./create');
 
-function createAppPrompts(name, options) {
+function createAppPrompts(name, options = {}) {
   if (isEmpty(name)) { // create 命令未设置项目名
     inquirer.prompt(createAppNameQuestion).then((answer) => {
       answer.name = name || answer.name;
