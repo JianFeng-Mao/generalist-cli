@@ -1,7 +1,7 @@
 const path = require('path');
 const fsPromise = require('fs/promises');
 const inquirer = require('inquirer');
-const { overWriteQuestion, createAppTemplateQuestion } = require('./questions');
+const { overWriteQuestion, createAppTemplateQuestion, adminTemplateQuestion } = require('./questions');
 const { isExistPath } = require('@generalist/utils/is');
 const Generator = require('./Generator');
 async function createApp({ name }, options) {
@@ -33,13 +33,18 @@ async function createApp({ name }, options) {
   }
 
   // 选择项目模板
-  inquirer.prompt(createAppTemplateQuestion).then(answer => {
+  const { template } = await inquirer.prompt(createAppTemplateQuestion);
+  let tempName;
+  if(template === 'admin') { // 选择默认后台模板
+    const { adminTemp } = await inquirer.prompt(adminTemplateQuestion);
+    tempName = adminTemp
+  } else { // 自定义配置
 
-    // 创建项目 ==================
-    const grnerator = new Generator(name, answer.template, targetPath);
+  }
+  // 创建项目 ==================
+  const grnerator = new Generator(name, tempName, targetPath);
 
-    grnerator.createApp();
-  })
+  grnerator.createApp(template === 'admin');
 }
 
 module.exports = {

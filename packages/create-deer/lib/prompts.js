@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const { isEmpty } = require('@generalist/utils/util');
+const { isEmpty } = require('@generalist/utils/is');
 
 const { createAppNameQuestion } = require('./questions');
 const { createApp } = require('./create');

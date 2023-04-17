@@ -1,14 +1,20 @@
 const fsPromise = require('fs/promises');
 const path = require('path');
-const { getFullTempltePath } = require('@generalist/utils/template');
 const ejs = require('ejs');
-const { isImage } = require('@generalist/utils/is');
+const downloadGitRepo = require('download-git-repo');
+const util = require('util');
+const { isImage, isEmpty } = require('@generalist/utils/is');
+const { getFullTempltePath } = require('./template');
+const { getRepoInfo, getTagList } = require('./request');
+const inquirer = require('inquirer');
 
 class Generator {
   constructor(name, template, targetPath) {
     this.name = name;
     this.template = template;
     this.path = targetPath;
+
+    
   }
 
   /**
@@ -36,7 +42,6 @@ class Generator {
       const srcPath = path.join(sourcePath, file);
       // 获取文件信息
       const stats = await fsPromise.stat(srcPath);
-      // TODO: 待处理 - 当文件是图片类型时会出错
       if(stats.isDirectory()) { // 是文件夹，递归该文件夹下的所有子文件
         // 在目标路径下创建同名文件夹
         const tempPath = await this.mkDirectory(targetPath, file);
@@ -62,20 +67,44 @@ class Generator {
     });
   }
 
+  async fetchGitRepo() {
+    const repo = await getRepoInfo(this.template);
+    return repo
+  }
+  async fetchRepoTag(repo) {
+    const tags = await getTagList(repo.full_name);
+    const { tag } = await inquirer.prompt({
+      name: 'tag',
+      type: 'list',
+      choices: tags.map(tag => `${repo.name}-${tag.name}`),
+      message: '选择要使用的版本'
+    })
+    return tag;
+  }
   /**
    * 根据template选项创建初始项目
    */
-  async createApp() {
-    // 获取模板文件所在路径
-    const templateUrl = getFullTempltePath(this.template);
-
+  async createApp(isAdmin) {
     // 控制台所在目录
     const cwdUrl = process.cwd();
-    console.log(cwdUrl);
-    // 创建目录并返回创建的第一个目录路径（recursive: true）
-    const targetPath = await this.mkDirectory(cwdUrl, this.name);
 
-    this.copyFile(templateUrl, targetPath);
+    if(isAdmin) {
+      const repo = await this.fetchGitRepo();
+      const tag = await this.fetchRepoTag(repo);
+      const repoUrl = `${repo.owner.login}${tag ? '#' + tag : ''}`;
+      // 下载git仓库方法，promise化
+      const downloadGitRepoPromisify = util.promisify(downloadGitRepo);
+      downloadGitRepoPromisify(repoUrl, path.join(cwdUrl, this.name));
+    } else {
+      // 获取模板文件所在路径
+      const templateUrl = getFullTempltePath(this.template);
+
+      // 创建目录并返回创建的第一个目录路径（recursive: true）
+      const targetPath = await this.mkDirectory(cwdUrl, this.name);
+
+      this.copyFile(templateUrl, targetPath);
+    }
+    
   }
 }
 

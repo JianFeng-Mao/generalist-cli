@@ -12,13 +12,36 @@ const createAppTemplateQuestion = {
   choices: [
     {
       name: '默认后台管理模板',
-      short: '一个包含vue2全家桶、axios、element的后台管理系统',
+      short: '默认后台管理模板',
       value: 'admin'
     },
     {
       name: '自定义配置',
       short: '自定义配置',
       value: 'custom'
+    }
+  ]
+};
+
+const adminTemplateQuestion = {
+  type: 'list',
+  name: 'adminTemp',
+  message: 'AdminTemp',
+  choices: [
+    {
+      name: 'Vue2(vue-admin-template)',
+      short: 'vue-admin-template',
+      value: 'vue2'
+    },
+    // {
+    //   name: 'Vue3(gin-vue-admin)',
+    //   short: 'gin-vue-admin',
+    //   value: 'vue3'
+    // },
+    {
+      name: 'React(ant-design-pro)',
+      short: 'ant-design-pro',
+      value: 'react'
     }
   ]
 };
@@ -44,5 +67,6 @@ const overWriteQuestion = {
 module.exports = {
   createAppNameQuestion,
   createAppTemplateQuestion,
-  overWriteQuestion
+  overWriteQuestion,
+  adminTemplateQuestion
 };
