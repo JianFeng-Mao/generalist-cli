@@ -34,17 +34,15 @@ async function createApp({ name }, options) {
 
   // 选择项目模板
   const { template } = await inquirer.prompt(createAppTemplateQuestion);
-  let tempName;
-  if(template === 'admin') { // 选择默认后台模板
-    const { adminTemp } = await inquirer.prompt(adminTemplateQuestion);
-    tempName = adminTemp
-  } else { // 自定义配置
-
+  //TODO
+  if(template !== 'admin') { // 自定义配置
+    
   }
+  
   // 创建项目 ==================
-  const grnerator = new Generator(name, tempName, targetPath);
+  const grnerator = new Generator(name, template, targetPath);
 
-  grnerator.createApp(template === 'admin');
+  grnerator.createApp();
 }
 
 module.exports = {

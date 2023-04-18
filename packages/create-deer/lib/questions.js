@@ -15,34 +15,11 @@ const createAppTemplateQuestion = {
       short: '默认后台管理模板',
       value: 'admin'
     },
-    {
-      name: '自定义配置',
-      short: '自定义配置',
-      value: 'custom'
-    }
-  ]
-};
-
-const adminTemplateQuestion = {
-  type: 'list',
-  name: 'adminTemp',
-  message: 'AdminTemp',
-  choices: [
-    {
-      name: 'Vue2(vue-admin-template)',
-      short: 'vue-admin-template',
-      value: 'vue2'
-    },
     // {
-    //   name: 'Vue3(gin-vue-admin)',
-    //   short: 'gin-vue-admin',
-    //   value: 'vue3'
-    // },
-    {
-      name: 'React(ant-design-pro)',
-      short: 'ant-design-pro',
-      value: 'react'
-    }
+    //   name: '自定义配置',
+    //   short: '自定义配置',
+    //   value: 'custom'
+    // }
   ]
 };
 
@@ -67,6 +44,5 @@ const overWriteQuestion = {
 module.exports = {
   createAppNameQuestion,
   createAppTemplateQuestion,
-  overWriteQuestion,
-  adminTemplateQuestion
+  overWriteQuestion
 };

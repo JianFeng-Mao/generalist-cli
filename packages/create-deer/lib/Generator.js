@@ -5,7 +5,7 @@ const downloadGitRepo = require('download-git-repo');
 const util = require('util');
 const { isImage, isEmpty } = require('@generalist/utils/is');
 const { getFullTempltePath } = require('./template');
-const { getRepoInfo, getTagList } = require('./request');
+const { getRepoList, getTagList } = require('./request');
 const inquirer = require('inquirer');
 
 class Generator {
@@ -13,8 +13,6 @@ class Generator {
     this.name = name;
     this.template = template;
     this.path = targetPath;
-
-    
   }
 
   /**
@@ -68,30 +66,37 @@ class Generator {
   }
 
   async fetchGitRepo() {
-    const repo = await getRepoInfo(this.template);
+    const repoList = await getRepoList();
+    const repos = repoList.map(r => r.name);
+    const { repo } = await inquirer.prompt({
+      name: 'repo',
+      type: 'list',
+      choices: repos,
+      message: '选择默认模板'
+    })
     return repo
   }
   async fetchRepoTag(repo) {
-    const tags = await getTagList(repo.full_name);
+    const tags = await getTagList(repo);
     const { tag } = await inquirer.prompt({
       name: 'tag',
       type: 'list',
-      choices: tags.map(tag => `${repo.name}-${tag.name}`),
-      message: '选择要使用的版本'
+      choices: tags.map(tag => tag.name),
+      message: '选择版本'
     })
     return tag;
   }
   /**
    * 根据template选项创建初始项目
    */
-  async createApp(isAdmin) {
+  async createApp() {
     // 控制台所在目录
     const cwdUrl = process.cwd();
 
-    if(isAdmin) {
+    if(this.template === 'admin') {
       const repo = await this.fetchGitRepo();
       const tag = await this.fetchRepoTag(repo);
-      const repoUrl = `${repo.owner.login}${tag ? '#' + tag : ''}`;
+      const repoUrl = `generalist-repos/${repo}${tag ? '#' + tag : ''}`;
       // 下载git仓库方法，promise化
       const downloadGitRepoPromisify = util.promisify(downloadGitRepo);
       downloadGitRepoPromisify(repoUrl, path.join(cwdUrl, this.name));
