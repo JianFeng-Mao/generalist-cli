@@ -7,7 +7,7 @@ const { createAppPrompts } = require('../lib/prompts.js');
 
 const program = new Command();
 
-program.version(`v${packageInfo.version}`).usage('<command> [option]');
+program.name('create-deer').version(`v${packageInfo.version}`).usage('<command> [option]');
 
 const init = () => { createAppPrompts(); }
 
