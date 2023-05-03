@@ -1,6 +1,7 @@
 #! /usr/bin/env node
 
 const { Command } = require('commander');
+const gradient = require('gradient-string');
 
 const { packageInfo } = require('../lib/getPackageInfo.js');
 const { createAppPrompts } = require('../lib/prompts.js');
@@ -8,6 +9,10 @@ const { createAppPrompts } = require('../lib/prompts.js');
 const program = new Command();
 
 program.name('create-deer').version(`v${packageInfo.version}`).usage('<command> [option]');
+
+program.on('--help', () => {
+  console.log(`\r\n${gradient.vice('Welcome deer-cli')}`);
+})
 
 const init = () => { createAppPrompts(); }
 

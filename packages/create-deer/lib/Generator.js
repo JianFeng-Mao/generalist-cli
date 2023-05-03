@@ -7,12 +7,15 @@ const { isImage, isEmpty } = require('@generalist/utils/is');
 const { getFullTempltePath } = require('./template');
 const { getRepoList, getTagList } = require('./request');
 const inquirer = require('inquirer');
+const Spinner = require('./loading');
+const gradient = require('gradient-string');
 
 class Generator {
   constructor(name, template, targetPath) {
     this.name = name;
     this.template = template;
     this.path = targetPath;
+    this.spinner = Spinner();
   }
 
   /**
@@ -23,8 +26,19 @@ class Generator {
    * @returns 
    */
   async mkDirectory(targetPath, filename, options) {
-    options = { recursive: true, ...options };
-    return await fsPromise.mkdir(path.join(targetPath, filename), options) 
+    try {
+      this.spinner.start('创建目录');
+
+      options = { recursive: true, ...options };
+
+      const resPath = await fsPromise.mkdir(path.join(targetPath, filename), options); 
+      
+      this.spinner.succeed(`目录【${resPath}】创建成功`);
+
+      return resPath;
+    } catch (error) {
+      this.spinner.fail(error);
+    }
   }
 
   /**
@@ -65,26 +79,56 @@ class Generator {
     });
   }
 
+  /**
+   * 拉取远程模板仓库列表
+   * @returns 
+   */
   async fetchGitRepo() {
-    const repoList = await getRepoList();
-    const repos = repoList.map(r => r.name);
-    const { repo } = await inquirer.prompt({
-      name: 'repo',
-      type: 'list',
-      choices: repos,
-      message: '选择默认模板'
-    })
-    return repo
+    try {
+      this.spinner.start('拉取远程模板列表');
+
+      const repoList = await getRepoList();
+
+      this.spinner.succeed();
+
+      const repos = repoList.map(r => r.name);
+
+      const { repo } = await inquirer.prompt({
+        name: 'repo',
+        type: 'list',
+        choices: repos,
+        message: '选择默认模板'
+      })
+
+      return repo;
+    } catch (error) {
+      this.spinner.fail(error);
+    }
   }
+  /**
+   * 拉取指定代码仓库的tag
+   * @param {*} repo 
+   * @returns 
+   */
   async fetchRepoTag(repo) {
-    const tags = await getTagList(repo);
-    const { tag } = await inquirer.prompt({
-      name: 'tag',
-      type: 'list',
-      choices: tags.map(tag => tag.name),
-      message: '选择版本'
-    })
-    return tag;
+    try {
+      this.spinner.start(`拉取【${repo}】模板仓库的tag列表`);
+
+      const tags = await getTagList(repo);
+
+      this.spinner.succeed();
+
+      const { tag } = await inquirer.prompt({
+        name: 'tag',
+        type: 'list',
+        choices: tags.map(tag => tag.name),
+        message: '选择版本'
+      })
+
+      return tag;
+    } catch (error) {
+      this.spinner.fail(error);
+    }
   }
   /**
    * 根据template选项创建初始项目
@@ -92,6 +136,7 @@ class Generator {
   async createApp() {
     // 控制台所在目录
     const cwdUrl = process.cwd();
+    const greenGradient = gradient('green', 'green')
 
     if(this.template === 'admin') {
       const repo = await this.fetchGitRepo();
@@ -99,7 +144,10 @@ class Generator {
       const repoUrl = `generalist-repos/${repo}${tag ? '#' + tag : ''}`;
       // 下载git仓库方法，promise化
       const downloadGitRepoPromisify = util.promisify(downloadGitRepo);
-      downloadGitRepoPromisify(repoUrl, path.join(cwdUrl, this.name));
+
+      this.spinner.start(`初始化模板【${repo}-${tag}】`);
+      await downloadGitRepoPromisify(repoUrl, path.join(cwdUrl, this.name));
+      this.spinner.succeed(`${greenGradient(this.name)} 创建成功，路径：${greenGradient(this.path)}`);
     } else {
       // 获取模板文件所在路径
       const templateUrl = getFullTempltePath(this.template);

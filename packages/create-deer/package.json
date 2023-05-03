@@ -35,6 +35,8 @@
     "commander": "10.0.0",
     "download-git-repo": "^3.0.2",
     "ejs": "3.1.9",
-    "inquirer": "8.2.4"
+    "gradient-string": "^2.0.2",
+    "inquirer": "8.2.4",
+    "ora": "5.4.1"
   }
 }
